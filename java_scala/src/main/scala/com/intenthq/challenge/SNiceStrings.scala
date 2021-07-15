@@ -21,5 +21,30 @@ object SNiceStrings {
 //    dvszwmarrgswjxmb is naughty because it contains only one vowel.
 //    How many strings are nice?
 
-  def nice(xs: List[String]): Int = ???
+  def nice(xs: List[String]): Int = {
+    //Regex checks if String contains at least 3 vowels. Regex doesn't take into account UPPER case chars
+    val vowelsRegex: String = "^([a-z]*[aeiou][a-z]*){3}"
+    val invalidSubstrings: List[String] = List("ab", "cd", "pq", "xy")
+
+    val isTheStringNice: List[Boolean] = xs.map {
+      str =>
+        val atLeastThreeVowels = str.matches(vowelsRegex)
+
+        //Check if two characters are the same and count it
+        val adjacentChars = str.sliding(2).count(letter => letter(0) == letter(1))
+        val containsAdjacentChars = if (adjacentChars > 0) true else false
+
+        //Go through each invalid string and check if str contains it then return true
+        val containsInvalidStrings = invalidSubstrings.map(invalid => str.contains(invalid)).contains(true)
+
+        //Check Stirng if there are at least three vowels, there are adj chars and no invalid substrings
+        if (atLeastThreeVowels && containsAdjacentChars && !containsInvalidStrings) {
+          true
+        } else {
+          false
+        }
+    }
+
+    isTheStringNice.count(_ == true)
+  }
 }
