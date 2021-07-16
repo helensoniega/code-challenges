@@ -1,5 +1,6 @@
 package com.intenthq.challenge
 
+import scala.annotation.tailrec
 import scala.collection.mutable.Queue
 
 case class Node(value: Int, edges: List[Node] = List.empty)
@@ -18,30 +19,26 @@ object SConnectedGraph {
   // run(b, d) == false
   def run(source: Node, target: Node): Boolean = {
     val nodeQueue = new Queue[Node]()
-    var currentNode = source
-    var connected = false
+    nodeQueue.enqueue(source)
 
-    nodeQueue.enqueue(currentNode)
+    @tailrec
+    def areNodesConnected(currentNode: Node, connected: Boolean): Boolean = {
+      if (nodeQueue.nonEmpty && !connected) {
+        val nodesAreConnected = currentNode.edges.map(_.value == target.value).contains(true)
 
-    //While queue isn't empty and not connected
-    while(nodeQueue.nonEmpty && !connected) {
-      currentNode = nodeQueue.dequeue()
+        if (nodesAreConnected || currentNode.value == target.value) {
+          areNodesConnected(currentNode, connected = true)
+        } else {
+          currentNode.edges.foreach(node => nodeQueue.enqueue(node))
 
-      val nodesAreConnected = currentNode.edges.map(_.value == target.value).contains(true)
-
-      if (nodesAreConnected || currentNode.value == target.value) {
-        connected = true
+          areNodesConnected(nodeQueue.dequeue(), connected = false)
+        }
+      } else {
+        connected
       }
-
-      if (currentNode.edges.nonEmpty) {
-        currentNode.edges.foreach( node =>
-          nodeQueue.enqueue(node)
-        )
-      }
-
     }
 
-    connected
+    areNodesConnected(source, connected = false)
   }
 
 }

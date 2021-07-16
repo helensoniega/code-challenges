@@ -1,5 +1,7 @@
 package com.intenthq.challenge;
 
+import scala.annotation.tailrec
+
 object SEnigma {
 
   // We have a system to transfer information from one place to another. This system
@@ -24,6 +26,7 @@ object SEnigma {
 
   def deciphe(map: Map[Int, Char])(message: List[Int]): String = {
 
+    @tailrec
     def decipherMessage(msg: List[Int], keySize: Int = 1, result: String = ""): String = {
       msg match {
         case Nil => result
@@ -37,21 +40,20 @@ object SEnigma {
               /*If nextKey is valid
                 If removing keys from msg is non empty then return full msg because we don't want to drop anything if
                 the nextKey is valid. Nothing will be added to result too. Next case will add it to result*/
-              val currentKeySize = nextKeySize
               val (listToPass, res) =
-              if (msg.drop(currentKeySize).nonEmpty) {
-                (msg, "")
-              } else {
-                (msg.drop(currentKeySize), value)
-              }
+                if (msg.drop(nextKeySize).nonEmpty) {
+                  (msg, "")
+                } else {
+                  (msg.drop(nextKeySize), value.toString)
+                }
 
-              decipherMessage(listToPass, keySize = currentKeySize, result = result + res)
+              decipherMessage(listToPass, keySize = nextKeySize, result = result + res)
             case (Some(value), _) =>
               //If next key isn't valid
               decipherMessage(msg.drop(keySize), keySize = 1, result = result + value)
             case _ =>
               //Key isn't found so add key to result
-              decipherMessage(tail, keySize = 1, result + head)
+              decipherMessage(tail, keySize = 1, result = result + head)
           }
       }
     }

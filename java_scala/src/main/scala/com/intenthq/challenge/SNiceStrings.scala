@@ -26,7 +26,7 @@ object SNiceStrings {
     val vowelsRegex: String = "^([a-z]*[aeiou][a-z]*){3}"
     val invalidSubstrings: List[String] = List("ab", "cd", "pq", "xy")
 
-    val isTheStringNice: List[Boolean] = xs.map {
+    xs.map {
       str =>
         val atLeastThreeVowels = str.matches(vowelsRegex)
 
@@ -34,7 +34,7 @@ object SNiceStrings {
         val adjacentChars = str.sliding(2).count(letter => letter(0) == letter(1))
         val containsAdjacentChars = if (adjacentChars > 0) true else false
 
-        //Go through each invalid string and check if str contains it then return true
+        //Go through each invalid string and check if str contains it then check if new list contains true
         val containsInvalidStrings = invalidSubstrings.map(invalid => str.contains(invalid)).contains(true)
 
         //Check Stirng if there are at least three vowels, there are adj chars and no invalid substrings
@@ -43,8 +43,6 @@ object SNiceStrings {
         } else {
           false
         }
-    }
-
-    isTheStringNice.count(_ == true)
+    }.count(_ == true)
   }
 }
